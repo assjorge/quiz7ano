@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Robótica e Sustentabilidade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .login-section, .admin-section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .student-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        .btn-admin:hover {
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.3);
+        }
+
+        .quiz-section {
+            display: none;
+            padding: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .question-counter {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .option {
+            background: white;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #4CAF50;
+            background: #f8fff8;
+        }
+
+        .option.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #d4edda;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #f8d7da;
+        }
+
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .results-section {
+            display: none;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #4CAF50;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .performance-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .admin-panel {
+            display: none;
+            padding: 40px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .ranking-table, .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .ranking-table th, .ranking-table td,
+        .report-table th, .report-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ranking-table th, .report-table th {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .ranking-table tr:nth-child(even), .report-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .medal {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .review-needed {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .review-needed h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .realtime-controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .realtime-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .realtime-card {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .realtime-card.good {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        }
+
+        .realtime-card.warning {
+            background: linear-gradient(135deg, #FFD93D, #FF9A56);
+        }
+
+        .progress-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .progress-bars {
+            margin-top: 20px;
+        }
+
+        .class-progress {
+            margin: 15px 0;
+        }
+
+        .class-progress h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .progress-bar-class {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .live-activity {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-ongoing {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #D4EDDA;
+            color: #155724;
+        }
+
+        .status-not-started {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        /* Modal de Login do Professor */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .admin-modal-content {
+            position: relative;
+            background: white;
+            margin: 15% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-modal-header {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+
+        .admin-modal-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .admin-modal-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .admin-modal-body {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .password-input-group {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 3px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: bold;
+            transition: border-color 0.3s;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+        }
+
+        .password-hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn-modal {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn-modal-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn-modal-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-modal-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .score-display {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Quiz: Robótica e Sustentabilidade</h1>
+            <p>7º Ano - Teste seus conhecimentos!</p>
+        </div>
+
+        <!-- Seção de Login do Estudante -->
+        <div class="login-section" id="loginSection">
+            <h2>👋 Bem-vindo!</h2>
+            <p>Digite suas informações para começar o quiz:</p>
+            
+            <div class="student-form">
+                <div class="form-group">
+                    <label for="studentName">Nome Completo:</label>
+                    <input type="text" id="studentName" placeholder="Digite seu nome completo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentClass">Turma:</label>
+                    <select id="studentClass">
+                        <option value="">Selecione sua turma</option>
+                        <option value="7A">7º Ano A</option>
+                        <option value="7B">7º Ano B</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">🚀 Começar Quiz</button>
+                <button class="btn btn-admin" onclick="showAdminLogin()">👨‍🏫 Área do Professor</button>
+            </div>
+        </div>
+
+        <!-- Seção do Quiz -->
+        <div class="quiz-section" id="quizSection">
+            <div class="score-display" id="scoreDisplay">
+                Pontuação: <span id="currentScore">0</span>/15
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <button class="btn" id="nextBtn" onclick="nextQuestion()" style="display:none;">
+                Próxima Pergunta ➡️
+            </button>
+            
+            <button class="btn" id="finishBtn" onclick="finishQuiz()" style="display:none;">
+                🏁 Finalizar Quiz
+            </button>
+        </div>
+
+        <!-- Seção de Resultados -->
+        <div class="results-section" id="resultsSection">
+            <h2>🎉 Quiz Concluído!</h2>
+            <div class="final-score" id="finalScore">0/15</div>
+            <div class="performance-summary" id="performanceSummary"></div>
+            <button class="btn" onclick="restartQuiz()">🔄 Fazer Novamente</button>
+        </div>
+
+        <!-- Painel Administrativo -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('realtime')">📈 Tempo Real</button>
+                <button class="tab-btn" onclick="showTab('ranking')">📊 Ranking</button>
+                <button class="tab-btn" onclick="showTab('reports')">📋 Relatórios</button>
+                <button class="tab-btn" onclick="showTab('questions')">❓ Revisão de Questões</button>
+            </div>
+
+            <div id="realtime" class="tab-content active">
+                <h3>📈 Monitoramento em Tempo Real</h3>
+                <div class="realtime-controls">
+                    <button class="btn" onclick="refreshRealTimeData()">🔄 Atualizar</button>
+                    <button class="btn" onclick="toggleAutoRefresh()">⏱️ Auto-Refresh: <span id="autoRefreshStatus">OFF</span></button>
+                </div>
+                <div class="realtime-stats" id="realtimeStats"></div>
+                <div class="progress-overview" id="progressOverview"></div>
+                <div class="live-activity" id="liveActivity"></div>
+            </div>
+
+            <div id="ranking" class="tab-content">
+                <h3>🏆 Ranking Geral das Turmas</h3>
+                <div id="rankingContent"></div>
+            </div>
+
+            <div id="reports" class="tab-content">
+                <h3>📊 Relatório Geral</h3>
+                <div class="stats-grid" id="statsGrid"></div>
+                <div id="reportsContent"></div>
+            </div>
+
+            <div id="questions" class="tab-content">
+                <h3>🔍 Questões para Revisão</h3>
+                <p>Questões que mais precisam de atenção baseadas nos erros dos alunos:</p>
+                <div id="questionsReview"></div>
+            </div>
+
+            <button class="btn" onclick="backToLogin()">⬅️ Voltar</button>
+            <button class="btn btn-admin" onclick="exportData()">💾 Exportar Dados</button>
+        </div>
+
+        <!-- Modal de Login do Professor -->
+        <div id="adminModal" class="admin-modal">
+            <div class="admin-modal-content">
+                <div class="admin-modal-header">
+                    <span class="close-modal" onclick="closeAdminModal()">&times;</span>
+                    <h2>🔐 Área do Professor</h2>
+                    <p>Digite sua senha para acessar o painel administrativo</p>
+                </div>
+                <div class="admin-modal-body">
+                    <div id="errorMessage" class="error-message"></div>
+                    <div class="password-input-group">
+                        <input type="password" id="adminPassword" class="password-input" placeholder="Digite sua senha" maxlength="20">
+                        <div class="password-hint">💡 Dica: a senha padrão é "professor123"</div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="btn-modal btn-modal-secondary" onclick="closeAdminModal()">❌ Cancelar</button>
+                        <button class="btn-modal btn-modal-primary" onclick="validateAdminPassword()">🚀 Entrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do Quiz
+        const questionsOriginal = [
+            {
+                id: 1,
+                question: "Qual dos seguintes NÃO é um pilar do Pensamento Computacional?",
+                options: [
+                    "Decomposição",
+                    "Reconhecimento de padrões", 
+                    "Automação residencial",
+                    "Algoritmo"
+                ],
+                correct: 2,
+                topic: "Pensamento Computacional"
+            },
+            {
+                id: 2,
+                question: "O que significa 'Decomposição' no contexto do Pensamento Computacional?",
+                options: [
+                    "Ignorar detalhes irrelevantes",
+                    "Dividir um problema grande em partes menores",
+                    "Identificar semelhanças e tendências",
+                    "Criar um passo a passo para resolver problemas"
+                ],
+                correct: 1,
+                topic: "Pensamento Computacional"
+            },
+            {
+                id: 3,
+                question: "Qual tecnologia é usada em assistentes virtuais como Alexa e Google Assistant para otimizar o consumo de energia?",
+                options: [
+                    "Apenas sensores de movimento",
+                    "Controle por voz e automação inteligente",
+                    "Painéis solares",
+                    "Sistemas de refrigeração"
+                ],
+                correct: 1,
+                topic: "Casa Inteligente"
+            },
+            {
+                id: 4,
+                question: "Sensores IoT em residências inteligentes ajudam principalmente a:",
+                options: [
+                    "Aumentar o consumo de energia",
+                    "Ajustar automaticamente luz, temperatura e umidade",
+                    "Apenas detectar invasões",
+                    "Controlar apenas a iluminação"
+                ],
+                correct: 1,
+                topic: "Sensores IoT"
+            },
+            {
+                id: 5,
+                question: "Uma casa ecológica se diferencia de uma casa apenas inteligente porque:",
+                options: [
+                    "Usa mais tecnologia",
+                    "É mais cara",
+                    "Prioriza a sustentabilidade e redução do impacto ambiental",
+                    "Tem mais sensores"
+                ],
+                correct: 2,
+                topic: "Casa Ecológica"
+            },
+            {
+                id: 6,
+                question: "Qual das seguintes NÃO é uma ferramenta de controle para automação residencial?",
+                options: [
+                    "Smartphones e tablets",
+                    "Assistentes de voz",
+                    "Máquina de lavar tradicional",
+                    "Sensores IoT"
+                ],
+                correct: 2,
+                topic: "Ferramentas de Controle"
+            },
+            {
+                id: 7,
+                question: "Torneiras com sensor contribuem para a sustentabilidade porque:",
+                options: [
+                    "São mais bonitas",
+                    "Evitam desperdício de água liberando fluxo apenas quando necessário",
+                    "Gastam mais energia",
+                    "São mais fáceis de limpar"
+                ],
+                correct: 1,
+                topic: "Automação Sustentável"
+            },
+            {
+                id: 8,
+                question: "Na agricultura, os drones são usados principalmente para:",
+                options: [
+                    "Apenas tirar fotos",
+                    "Monitorar plantações, aplicar insumos e detectar problemas",
+                    "Assustar pássaros",
+                    "Transportar pessoas"
+                ],
+                correct: 1,
+                topic: "Agricultura de Precisão"
+            },
+            {
+                id: 9,
+                question: "Sensores de solo na agricultura inteligente ajudam a:",
+                options: [
+                    "Apenas medir a temperatura",
+                    "Medir umidade, nutrientes e pH para otimizar irrigação",
+                    "Detectar apenas pragas",
+                    "Controlar apenas a iluminação"
+                ],
+                correct: 1,
+                topic: "Agricultura de Precisão"
+            },
+            {
+                id: 10,
+                question: "Qual é o principal benefício da irrigação inteligente?",
+                options: [
+                    "Usar mais água",
+                    "Regar apenas de dia",
+                    "Usar apenas a água necessária, evitando desperdício",
+                    "Regar todas as plantas igualmente"
+                ],
+                correct: 2,
+                topic: "Irrigação Inteligente"
+            },
+            {
+                id: 11,
+                question: "Dispositivos IoT para monitoramento de gado ajudam a:",
+                options: [
+                    "Apenas contar os animais",
+                    "Monitorar saúde e localização dos animais",
+                    "Apenas fornecer água",
+                    "Controlar apenas a alimentação"
+                ],
+                correct: 1,
+                topic: "Pecuária Inteligente"
+            },
+            {
+                id: 12,
+                question: "O uso de energia renovável na agricultura contribui para:",
+                options: [
+                    "Aumentar o uso de combustíveis fósseis",
+                    "Reduzir custos e emissões de carbono",
+                    "Apenas economizar dinheiro",
+                    "Complicar os sistemas"
+                ],
+                correct: 1,
+                topic: "Energia Renovável"
+            },
+            {
+                id: 13,
+                question: "Lixeiras inteligentes contribuem para a sustentabilidade porque:",
+                options: [
+                    "São apenas mais bonitas",
+                    "Podem compactar lixo e auxiliar na separação de recicláveis",
+                    "Gastam mais energia",
+                    "Ocupam mais espaço"
+                ],
+                correct: 1,
+                topic: "Gestão de Resíduos"
+            },
+            {
+                id: 14,
+                question: "A automação na agricultura de precisão permite:",
+                options: [
+                    "Usar mais pesticidas",
+                    "Detectar pragas e usar menos pesticidas com aplicação precisa",
+                    "Apenas aumentar a produção",
+                    "Substituir completamente os agricultores"
+                ],
+                correct: 1,
+                topic: "Controle de Pragas"
+            },
+            {
+                id: 15,
+                question: "Qual é o principal objetivo da integração entre robótica e sustentabilidade?",
+                options: [
+                    "Apenas automatizar processos",
+                    "Tornar a tecnologia mais cara",
+                    "Otimizar recursos e reduzir impacto ambiental",
+                    "Substituir todos os trabalhadores"
+                ],
+                correct: 2,
+                topic: "Robótica e Sustentabilidade"
+            }
+        ];
+
+        // Função para embaralhar as opções de resposta
+        function shuffleQuestions() {
+            return questionsOriginal.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                return {
+                    ...q,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Variáveis globais
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let studentName = '';
+        let studentClass = '';
+        let answers = [];
+        let students = [];
+        let autoRefreshInterval = null;
+        let progressData = {};
+
+        function startQuiz() {
+            const name = document.getElementById('studentName').value.trim();
+            const classSelected = document.getElementById('studentClass').value;
+            
+            if (!name || !classSelected) {
+                alert('Por favor, preencha todas as informações!');
+                return;
+            }
+            
+            studentName = name;
+            studentClass = classSelected;
+            
+            // Embaralha as questões a cada novo quiz
+            questions = shuffleQuestions();
+            
+            // Registra início do quiz
+            const startData = {
+                name: studentName,
+                class: studentClass,
+                status: 'iniciado',
+                timestamp: new Date().toISOString(),
+                currentQuestion: 1
+            };
+            updateStudentProgress(startData);
+            
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-counter">Pergunta ${currentQuestionIndex + 1} de ${questions.length}</div>
+                    <div class="question-title">${question.question}</div>
+                    <ul class="options">
+                        ${question.options.map((option, index) => `
+                            <li class="option" onclick="selectOption(${index})" data-index="${index}">
+                                <strong>${String.fromCharCode(65 + index)})</strong> ${option}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex) {
+            const options = document.querySelectorAll('.option');
+            const question = questions[currentQuestionIndex];
+            
+            // Remove seleção anterior
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Marca opção selecionada
+            options[selectedIndex].classList.add('selected');
+            
+            // Desabilita outras opções
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedIndex && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // Registra resposta
+            const isCorrect = selectedIndex === question.correct;
+            answers.push({
+                questionId: question.id,
+                selected: selectedIndex,
+                correct: question.correct,
+                isCorrect: isCorrect,
+                topic: question.topic
+            });
+            
+            if (isCorrect) {
+                score++;
+                document.getElementById('currentScore').textContent = score;
+            }
+            
+            // Mostra botão próxima pergunta
+            setTimeout(() => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    document.getElementById('nextBtn').style.display = 'block';
+                } else {
+                    document.getElementById('finishBtn').style.display = 'block';
+                }
+            }, 1500);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            // Atualiza progresso do estudante
+            updateStudentProgress({
+                name: studentName,
+                class: studentClass,
+                status: 'em-andamento',
+                currentQuestion: currentQuestionIndex + 1,
+                score: score,
+                timestamp: new Date().toISOString()
+            });
+            
+            document.getElementById('nextBtn').style.display = 'none';
+            showQuestion();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function finishQuiz() {
+            // Salva dados do estudante
+            const studentData = {
+                name: studentName,
+                class: studentClass,
+                score: score,
+                totalQuestions: questions.length,
+                answers: answers,
+                timestamp: new Date().toISOString(),
+                percentage: Math.round((score / questions.length) * 100),
+                status: 'concluido'
+            };
+            
+            students.push(studentData);
+            updateStudentProgress(studentData);
+            
+            // Mostra resultados
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            showResults();
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            let performance = '';
+            if (percentage >= 90) performance = '🏆 Excelente! Você domina o assunto!';
+            else if (percentage >= 70) performance = '🌟 Muito bem! Bom conhecimento!';
+            else if (percentage >= 50) performance = '👍 Razoável. Continue estudando!';
+            else performance = '📚 Precisa revisar mais o conteúdo.';
+            
+            const wrongAnswers = answers.filter(a => !a.isCorrect);
+            const wrongTopics = [...new Set(wrongAnswers.map(a => a.topic))];
+            
+            let summary = `
+                <h3>${performance}</h3>
+                <p><strong>Acertos:</strong> ${score} questões</p>
+                <p><strong>Erros:</strong> ${questions.length - score} questões</p>
+            `;
+            
+            if (wrongTopics.length > 0) {
+                summary += `<p><strong>Tópicos para revisar:</strong> ${wrongTopics.join(', ')}</p>`;
+            }
+            
+            document.getElementById('performanceSummary').innerHTML = summary;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answers = [];
+            questions = []; // Será embaralhado novamente no próximo startQuiz
+            document.getElementById('currentScore').textContent = '0';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentClass').value = '';
+        }
+
+        // Função para mostrar login do administrador
+        function showAdminLogin() {
+            console.log('Botão Área do Professor clicado');
+            const modal = document.getElementById('adminModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Foca no campo de senha
+                setTimeout(() => {
+                    document.getElementById('adminPassword').focus();
+                }, 100);
+            }
+        }
+
+        // Função para fechar o modal
+        function closeAdminModal() {
+            const modal = document.getElementById('adminModal');
+            const passwordInput = document.getElementById('adminPassword');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            if (passwordInput) {
+                passwordInput.value = '';
+            }
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }
+
+        // Função para validar a senha do admin
+        function validateAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            console.log('Tentativa de login com senha...');
+            
+            if (password === 'professor123') {
+                console.log('Senha correta! Redirecionando para painel admin...');
+                
+                // Fecha o modal
+                closeAdminModal();
+                
+                // Esconde seção de login
+                const loginSection = document.getElementById('loginSection');
+                if (loginSection) {
+                    loginSection.style.display = 'none';
+                    console.log('Login section escondida');
+                }
+                
+                // Mostra painel admin
+                const adminPanel = document.getElementById('adminPanel');
+                if (adminPanel) {
+                    adminPanel.style.display = 'block';
+                    console.log('Admin panel mostrado');
+                }
+                
+                // Ativa primeira aba
+                setTimeout(() => {
+                    const firstTabBtn = document.querySelector('.tab-btn');
+                    const firstTabContent = document.getElementById('realtime');
+                    
+                    if (firstTabBtn && firstTabContent) {
+                        // Remove todas as classes active
+                        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                        
+                        // Ativa primeira aba
+                        firstTabBtn.classList.add('active');
+                        firstTabContent.classList.add('active');
+                        console.log('Primeira aba ativada');
+                    }
+                    
+                    // Carrega dados
+                    loadAdminData();
+                }, 100);
+                
+            } else {
+                // Mostra erro
+                if (errorMessage) {
+                    errorMessage.innerHTML = '❌ Senha incorreta! Tente novamente.';
+                    errorMessage.style.display = 'block';
+                }
+                
+                // Limpa o campo
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        function loadAdminData() {
+            console.log('Carregando dados administrativos...');
+            
+            try {
+                // Garante que os dados estão sendo carregados
+                setTimeout(() => {
+                    showRealTimeData();
+                    showRanking();
+                    showReports();
+                    showQuestionsReview();
+                    console.log('Dados administrativos carregados com sucesso');
+                }, 200);
+            } catch (error) {
+                console.error('Erro ao carregar dados administrativos:', error);
+            }
+        }
+
+        function updateStudentProgress(data) {
+            progressData[data.name] = data;
+        }
+
+        function showRealTimeData() {
+            console.log('Mostrando dados em tempo real...');
+            
+            const activeStudents = Object.values(progressData).filter(s => 
+                s.status === 'iniciado' || s.status === 'em-andamento'
+            );
+            const completedStudents = students.length;
+            const totalActive = activeStudents.length;
+            
+            // Estatísticas em tempo real
+            const averageProgress = activeStudents.length > 0 
+                ? activeStudents.reduce((sum, s) => sum + (s.currentQuestion || 1), 0) / activeStudents.length 
+                : 0;
+            
+            const totalStudentsEverStarted = Object.keys(progressData).length || 1;
+            const completionRate = (completedStudents / totalStudentsEverStarted) * 100;
+
+            const realtimeStatsElement = document.getElementById('realtimeStats');
+            if (!realtimeStatsElement) {
+                console.error('Elemento realtimeStats não encontrado');
+                return;
+            }
+
+            realtimeStatsElement.innerHTML = `
+                <div class="realtime-card ${totalActive > 0 ? 'good' : 'warning'}">
+                    <h3>${totalActive}</h3>
+                    <p>Alunos Fazendo Quiz</p>
+                </div>
+                <div class="realtime-card good">
+                    <h3>${completedStudents}</h3>
+                    <p>Quiz Concluídos</p>
+                </div>
+                <div class="realtime-card ${averageProgress > 7.5 ? 'good' : 'warning'}">
+                    <h3>${averageProgress.toFixed(1)}/15</h3>
+                    <p>Questão Média Atual</p>
+                </div>
+                <div class="realtime-card ${completionRate > 70 ? 'good' : completionRate > 30 ? 'warning' : ''}">
+                    <h3>${completionRate.toFixed(0)}%</h3>
+                    <p>Taxa de Conclusão</p>
+                </div>
+            `;
+
+            // Progresso por turma
+            showClassProgress();
+            
+            // Atividade ao vivo
+            showLiveActivity();
+        }
+
+        function showClassProgress() {
+            const class7A = Object.values(progressData).filter(s => s.class === '7A');
+            const class7B = Object.values(progressData).filter(s => s.class === '7B');
+            
+            const progress7A = class7A.length > 0 
+                ? class7A.reduce((sum, s) => sum + ((s.currentQuestion || 1) / 15 * 100), 0) / class7A.length 
+                : 0;
+            
+            const progress7B = class7B.length > 0 
+                ? class7B.reduce((sum, s) => sum + ((s.currentQuestion || 1) / 15 * 100), 0) / class7B.length 
+                : 0;
+
+            const progressElement = document.getElementById('progressOverview');
+            if (progressElement) {
+                progressElement.innerHTML = `
+                    <h4>📊 Progresso por Turma</h4>
+                    <div class="progress-bars">
+                        <div class="class-progress">
+                            <h4>7º Ano A (${class7A.length} alunos)</h4>
+                            <div class="progress-bar-class">
+                                <div class="progress-fill" style="width: ${progress7A}%">
+                                    ${progress7A.toFixed(0)}%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="class-progress">
+                            <h4>7º Ano B (${class7B.length} alunos)</h4>
+                            <div class="progress-bar-class">
+                                <div class="progress-fill" style="width: ${progress7B}%">
+                                    ${progress7B.toFixed(0)}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showLiveActivity() {
+            const sortedActivity = Object.values(progressData)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 8);
+
+            const activityHtml = sortedActivity.length > 0 ? sortedActivity.map(student => {
+                let statusClass = 'status-not-started';
+                let statusText = 'Não iniciou';
+                
+                if (student.status === 'iniciado') {
+                    statusClass = 'status-ongoing';
+                    statusText = 'Iniciou';
+                } else if (student.status === 'em-andamento') {
+                    statusClass = 'status-ongoing';
+                    statusText = `Questão ${student.currentQuestion}/15`;
+                } else if (student.status === 'concluido') {
+                    statusClass = 'status-completed';
+                    statusText = `Concluído (${student.percentage}%)`;
+                }
+
+                return `
+                    <div class="activity-item">
+                        <div>
+                            <strong>${student.name}</strong> 
+                            <span style="color: #666;">(${student.class})</span>
+                        </div>
+                        <div class="activity-status ${statusClass}">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            }).join('') : '<p style="text-align: center; color: #666; margin: 20px 0;">Nenhuma atividade ainda. Os dados aparecerão quando os alunos começarem o quiz.</p>';
+
+            const liveActivityElement = document.getElementById('liveActivity');
+            if (liveActivityElement) {
+                liveActivityElement.innerHTML = `
+                    <h4>🔴 Atividade Recente</h4>
+                    ${activityHtml}
+                `;
+            }
+        }
+
+        function refreshRealTimeData() {
+            showRealTimeData();
+        }
+
+        function toggleAutoRefresh() {
+            const statusSpan = document.getElementById('autoRefreshStatus');
+            
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                statusSpan.textContent = 'OFF';
+                statusSpan.parentElement.style.opacity = '0.7';
+            } else {
+                autoRefreshInterval = setInterval(showRealTimeData, 3000); // Atualiza a cada 3 segundos
+                statusSpan.textContent = 'ON';
+                statusSpan.parentElement.style.opacity = '1';
+            }
+        }
+
+        function showRanking() {
+            const sortedStudents = students.sort((a, b) => b.score - a.score);
+            
+            const rankingHtml = sortedStudents.map((student, index) => {
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                return `
+                    <tr>
+                        <td><span class="medal">${medal}</span>${index + 1}º</td>
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${student.score}/${student.totalQuestions}</td>
+                        <td>${student.percentage}%</td>
+                        <td>${new Date(student.timestamp).toLocaleDateString()}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('rankingContent').innerHTML = `
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome</th>
+                            <th>Turma</th>
+                            <th>Pontuação</th>
+                            <th>Percentual</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rankingHtml || '<tr><td colspan="6" style="text-align: center; padding: 20px;">Nenhum dado disponível ainda</td></tr>'}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function showReports() {
+            if (students.length === 0) {
+                document.getElementById('statsGrid').innerHTML = '<p>Nenhum dado disponível ainda.</p>';
+                return;
+            }
+            
+            const totalStudents = students.length;
+            const averageScore = students.reduce((sum, s) => sum + s.percentage, 0) / totalStudents;
+            const class7A = students.filter(s => s.class === '7A');
+            const class7B = students.filter(s => s.class === '7B');
+            
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <span class="stat-number">${totalStudents}</span>
+                    <span>Total de Alunos</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${Math.round(averageScore)}%</span>
+                    <span>Média Geral</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${class7A.length}</span>
+                    <span>Turma 7º A</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${class7B.length}</span>
+                    <span>Turma 7º B</span>
+                </div>
+            `;
+        }
+
+        function showQuestionsReview() {
+            const questionErrors = {};
+            
+            students.forEach(student => {
+                student.answers.forEach(answer => {
+                    if (!answer.isCorrect) {
+                        if (!questionErrors[answer.questionId]) {
+                            questionErrors[answer.questionId] = {
+                                count: 0,
+                                topic: answer.topic,
+                                question: questionsOriginal.find(q => q.id === answer.questionId)?.question
+                            };
+                        }
+                        questionErrors[answer.questionId].count++;
+                    }
+                });
+            });
+            
+            const sortedErrors = Object.entries(questionErrors)
+                .sort(([,a], [,b]) => b.count - a.count)
+                .slice(0, 5);
+            
+            const reviewHtml = sortedErrors.map(([questionId, data]) => `
+                <div class="review-needed">
+                    <h4>❗ Questão ${questionId} - ${data.count} erro(s)</h4>
+                    <p><strong>Tópico:</strong> ${data.topic}</p>
+                    <p><strong>Pergunta:</strong> ${data.question}</p>
+                    <p><strong>Recomendação:</strong> Revisar este conteúdo em sala de aula</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('questionsReview').innerHTML = reviewHtml || '<p>Nenhuma questão precisa de revisão especial ainda.</p>';
+        }
+
+        function showTab(tabName) {
+            // Remove active de todos os botões e conteúdos
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Ativa o botão e conteúdo selecionado
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Recarrega dados se necessário
+            if (tabName === 'realtime') showRealTimeData();
+            else if (tabName === 'ranking') showRanking();
+            else if (tabName === 'reports') showReports();
+            else if (tabName === 'questions') showQuestionsReview();
+        }
+
+        function backToLogin() {
+            // Para o auto-refresh se estiver ativo
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+            
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+        }
+
+        function exportData() {
+            const dataToExport = {
+                exportDate: new Date().toISOString(),
+                totalStudents: students.length,
+                averageScore: students.reduce((sum, s) => sum + s.percentage, 0) / students.length || 0,
+                students: students,
+                questionAnalysis: getQuestionAnalysis()
+            };
+            
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `quiz-robotica-sustentabilidade-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            alert('Dados exportados com sucesso!');
+        }
+
+        function getQuestionAnalysis() {
+            const analysis = {};
+            
+            questionsOriginal.forEach(q => {
+                analysis[q.id] = {
+                    question: q.question,
+                    topic: q.topic,
+                    correctAnswers: 0,
+                    incorrectAnswers: 0,
+                    difficultyLevel: 'Fácil'
+                };
+            });
+            
+            students.forEach(student => {
+                student.answers.forEach(answer => {
+                    if (answer.isCorrect) {
+                        analysis[answer.questionId].correctAnswers++;
+                    } else {
+                        analysis[answer.questionId].incorrectAnswers++;
+                    }
+                });
+            });
+            
+            // Calcula nível de dificuldade
+            Object.keys(analysis).forEach(qId => {
+                const q = analysis[qId];
+                const total = q.correctAnswers + q.incorrectAnswers;
+                if (total > 0) {
+                    const correctPercentage = (q.correctAnswers / total) * 100;
+                    if (correctPercentage >= 80) q.difficultyLevel = 'Fácil';
+                    else if (correctPercentage >= 60) q.difficultyLevel = 'Médio';
+                    else q.difficultyLevel = 'Difícil';
+                }
+            });
+            
+            return analysis;
+        }
+
+        // Inicialização
+        window.onload = function() {
+            // Embaralha questões na inicialização
+            questions = shuffleQuestions();
+            console.log('Quiz de Robótica e Sustentabilidade carregado!');
+            console.log('Respostas embaralhadas para nova sessão');
+            
+            // Event listeners
+            const passwordInput = document.getElementById('adminPassword');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        validateAdminPassword();
+                    }
+                });
+            }
+
+            // Fechar modal clicando fora dele
+            const modal = document.getElementById('adminModal');
+            if (modal) {
+                window.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeAdminModal();
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>
